@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ДОД 20.01.26 — предварительный отчёт</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --purple: #6B21A8;
+    --purple-light: #F3E8FF;
+    --purple-muted: #9333EA;
+    --pink: #EC4899;
+    --pink-light: #FDF2F8;
+    --lime: #B5CC18;
+    --lime-light: #F7FBE7;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text-secondary: #6B7280;
+    --border: #E5E7EB;
+    --danger: #DC2626;
+    --danger-light: #FEF2F2;
+    --success: #16A34A;
+    --success-light: #F0FDF4;
+    --warn-light: #FFFBEB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 880px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--purple);
+  }
+
+  .header-left h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--purple);
+  }
+
+  .header-left .subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .logo-text {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* Verdict */
+  .verdict {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--pink);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--pink);
+  }
+
+  .verdict-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--pink);
+    margin-bottom: 8px;
+  }
+
+  .verdict p {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .verdict strong { color: var(--danger); }
+
+  /* KPI Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .kpi-card .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+
+  .kpi-card .value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .kpi-card .change {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .kpi-card.danger { border-top: 3px solid var(--danger); }
+  .kpi-card.danger .value { color: var(--danger); }
+  .kpi-card.danger .change { color: var(--danger); }
+
+  .kpi-card.success { border-top: 3px solid var(--lime); }
+  .kpi-card.success .value { color: var(--success); }
+  .kpi-card.success .change { color: var(--success); }
+
+  .kpi-card.neutral { border-top: 3px solid var(--purple-muted); }
+  .kpi-card.neutral .value { color: var(--purple); }
+  .kpi-card.neutral .change { color: var(--text-secondary); }
+
+  /* Section */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  .section h2 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--purple);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 20px 0 12px;
+    color: var(--text);
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--purple-light);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  thead th:first-child { border-radius: 4px 0 0 0; }
+  thead th:last-child { border-radius: 0 4px 0 0; }
+
+  tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #F3F4F6;
+  }
+
+  tbody tr:hover { background: #FAFAFA; }
+
+  .val-bad {
+    background: #FEE2E2;
+    color: var(--danger);
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+
+  .val-good {
+    background: #DCFCE7;
+    color: var(--success);
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+
+  .trend-down { color: var(--danger); font-weight: 500; font-size: 12px; }
+  .trend-up-good { color: var(--success); font-weight: 500; font-size: 12px; }
+  .trend-up-bad { color: var(--danger); font-weight: 500; font-size: 12px; }
+  .trend-stable { color: var(--text-secondary); font-size: 12px; }
+
+  /* Insights */
+  .insight-list { list-style: none; padding: 0; }
+
+  .insight-list li {
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .insight-list li.problem {
+    background: var(--danger-light);
+    border-left: 3px solid var(--danger);
+  }
+
+  .insight-list li.growth {
+    background: var(--success-light);
+    border-left: 3px solid var(--lime);
+  }
+
+  .insight-list li.question {
+    background: var(--warn-light);
+    border-left: 3px solid #F59E0B;
+  }
+
+  .insight-list li strong { font-weight: 600; }
+
+  /* Charts */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .chart-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .chart-box h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--purple);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* Source tags */
+  .source-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .source-vk { background: #EDE9FE; color: var(--purple); }
+  .source-ya { background: #FEE2E2; color: #B91C1C; }
+  .source-tg { background: #E0F2FE; color: #0369A1; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 11px;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { background: #fff; padding: 16px; font-size: 12px; }
+    .section, .kpi-card, .verdict, .chart-box {
+      box-shadow: none;
+      break-inside: avoid;
+      border-color: #ddd;
+    }
+    .charts-row { break-inside: avoid; }
+    .kpi-grid { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>ДОД 20.01.26</h1>
+      <div class="subtitle">Предварительный отчёт &middot; Сравнение с 17.12.25 и 06.11.25</div>
+    </div>
+    <div class="header-right">
+      <div class="logo-text">Онлайн-школа №1</div>
+      <div>Подготовлено: Гипотеза</div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <div class="verdict-title">Общая картина</div>
+    <p>Запуск провальный. Выручка — <strong>0 руб.</strong> при бюджете 445 173 руб. Обвал доходимости до эфира (<strong>12,21%</strong>) обрушил всю воронку. Яндекс привёл 133 регистрации, но 44% — школьники, не родители. До эфира дошёл 1 человек из 133. Те, кто дошёл, конвертируются хорошо (CR 30,77%), но их критически мало.</p>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card neutral">
+      <div class="label">CPR</div>
+      <div class="value">2 090 ₽</div>
+      <div class="change">~ стабильно (пред. 1 894)</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="label">Доходимость эфир</div>
+      <div class="value">12,2%</div>
+      <div class="change">было 72,5% &rarr; обвал</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="label">Выручка</div>
+      <div class="value">0 ₽</div>
+      <div class="change">было 760 424 ₽</div>
+    </div>
+    <div class="kpi-card success">
+      <div class="label">CR в заявку (веб)</div>
+      <div class="value">30,8%</div>
+      <div class="change">было 13,4% &rarr; рост</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="label">CPL квал лид</div>
+      <div class="value">89 035 ₽</div>
+      <div class="change">дороже x4</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="label">ROMI</div>
+      <div class="value">0%</div>
+      <div class="change">было 155,6%</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-box">
+      <h2>Доходимость по запускам (О)</h2>
+      <canvas id="chartAttendance"></canvas>
+    </div>
+    <div class="chart-box">
+      <h2>ROMI по запускам (О)</h2>
+      <canvas id="chartRomi"></canvas>
+    </div>
+  </div>
+
+  <!-- Main metrics table -->
+  <div class="section">
+    <h2>Динамика ключевых метрик (О — общая)</h2>
+    <table>
+      <thead>
+        <tr><th>Метрика</th><th>20.01.26</th><th>17.12.25</th><th>06.11.25</th><th>Тренд</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CPR</td><td>2 090</td><td>1 894</td><td>2 516</td><td class="trend-stable">~ стабильно</td></tr>
+        <tr><td>Доходимость эфир</td><td><span class="val-bad">12,21%</span></td><td>72,48%</td><td>31,23%</td><td class="trend-down">↓↓↓ обвал</td></tr>
+        <tr><td>CR в заявку с веба</td><td><span class="val-good">30,77%</span></td><td>13,37%</td><td>41,57%</td><td class="trend-up-good">↑ выросла</td></tr>
+        <tr><td>CPL лид (веб)</td><td>55 647</td><td>19 548</td><td>19 379</td><td class="trend-up-bad">↑↑ x2,8</td></tr>
+        <tr><td>CPL квал лид (веб)</td><td><span class="val-bad">148 391</span></td><td>30 544</td><td>26 556</td><td class="trend-up-bad">↑↑↑ x5</td></tr>
+        <tr><td>CPL лид общий</td><td>34 244</td><td>15 765</td><td>14 633</td><td class="trend-up-bad">↑↑ x2</td></tr>
+        <tr><td>CPL квал лид общий</td><td><span class="val-bad">89 035</span></td><td>24 435</td><td>20 486</td><td class="trend-up-bad">↑↑↑ x4</td></tr>
+        <tr><td>Выручка</td><td><span class="val-bad">0</span></td><td>760 424</td><td>310 214</td><td class="trend-down">↓↓↓ нет выручки</td></tr>
+        <tr><td>ROMI</td><td><span class="val-bad">0%</span></td><td>155,60%</td><td>43,26%</td><td class="trend-down">↓↓↓ обвал</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Problems & Growth -->
+  <div class="section">
+    <h2>Проблемные зоны</h2>
+    <ul class="insight-list">
+      <li class="problem"><strong>Доходимость 12,21%</strong> — в 6 раз ниже предыдущего запуска (72,48%). Из 213 зарегистрированных до эфира дошли 26 человек. По данным опроса бота, 44% регистраций с Яндекса — школьники, не родители.</li>
+      <li class="problem"><strong>0 продаж</strong> — при 5 квалифицированных лидах ни одной сделки. На предыдущем запуске 12 продаж (CR ОП 38,71%).</li>
+      <li class="problem"><strong>CPL квал лид 89 035 руб.</strong> — вырос в 4 раза. Воронка неэффективна.</li>
+    </ul>
+
+    <h2 style="margin-top: 20px;">Точки роста</h2>
+    <ul class="insight-list">
+      <li class="growth"><strong>CPR 2 090 руб.</strong> — стоимость регистрации стабильна, лучше чем 06.11 (2 516) и значительно лучше 17.12 (4 567).</li>
+      <li class="growth"><strong>CR в заявку с веба 30,77%</strong> — те, кто дошёл до эфира, конвертируются хорошо. Проблема не в вебинаре, а в доходимости.</li>
+    </ul>
+  </div>
+
+  <!-- Sources breakdown -->
+  <div class="section">
+    <h2>Разбивка по источникам холодного трафика (Х)</h2>
+    <table>
+      <thead>
+        <tr><th>Источник</th><th>Расход</th><th>Рег-ии</th><th>CPR</th><th>Дох-ть</th><th>Лидов</th><th>CPL</th><th>Квал</th><th>Квал CPL</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="source-tag source-vk">ВК</span></td>
+          <td>200 151</td><td>34</td><td>5 887</td><td><span class="val-good">29,41%</span></td><td>6</td><td>33 359</td><td>2</td><td>100 076</td>
+        </tr>
+        <tr>
+          <td><span class="source-tag source-ya">Яндекс</span></td>
+          <td>197 312</td><td>133</td><td><span class="val-good">1 484</span></td><td><span class="val-bad">0,75%</span></td><td>3</td><td>65 771</td><td>0</td><td>—</td>
+        </tr>
+        <tr>
+          <td><span class="source-tag source-tg">ТГ</span></td>
+          <td>47 710</td><td>11</td><td>4 337</td><td>18,18%</td><td>0</td><td>—</td><td>0</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Source charts -->
+  <div class="charts-row">
+    <div class="chart-box">
+      <h2>CPR vs Доходимость по источникам</h2>
+      <canvas id="chartSources"></canvas>
+    </div>
+    <div class="chart-box">
+      <h2>Доходимость холода: динамика</h2>
+      <canvas id="chartColdTrend"></canvas>
+    </div>
+  </div>
+
+  <!-- Cold dynamics table -->
+  <div class="section">
+    <h2>Динамика по источникам (холод — итого)</h2>
+    <table>
+      <thead>
+        <tr><th>Метрика</th><th>20.01.26</th><th>17.12.25</th><th>06.11.25</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CPR</td><td>2 501</td><td>4 567</td><td>3 335</td></tr>
+        <tr><td>Доходимость</td><td><span class="val-bad">7,30%</span></td><td>16,82%</td><td>14,42%</td></tr>
+        <tr><td>CPL лид</td><td>49 464</td><td>54 300</td><td>21 728</td></tr>
+        <tr><td>Квал лидов</td><td><span class="val-bad">2</span></td><td>8</td><td>21</td></tr>
+        <tr><td>CPL квал лид</td><td><span class="val-bad">222 587</span></td><td>61 087</td><td>34 144</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Key finding -->
+  <div class="section">
+    <h2>Главная находка</h2>
+    <ul class="insight-list">
+      <li class="problem"><strong>Яндекс: дешёвые регистрации (1 484 ₽), но доходимость 0,75%.</strong> Из 133 зарегистрированных на эфир пришёл 1 человек. По опросу бота — 44% аудитории Яндекса это школьники 15–20 лет, а не родители. ВК приводит 79% родителей. Яндекс таргетируется на подростков, которые не являются ЦА.</li>
+    </ul>
+  </div>
+
+  <!-- Questions -->
+  <div class="section">
+    <h2>Вопросы</h2>
+    <ul class="insight-list">
+      <li class="question"><strong>Яндекс:</strong> опрос бота подтверждает нецелевой трафик (школьники вместо родителей). Нужно пересмотреть таргетинг — исключить аудиторию 15–20 лет или сменить креативы на родительскую тематику.</li>
+      <li class="question"><strong>Продажи = 0</strong> при 5 квал лидах: ОП не дожал, или лиды были слабые?</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Онлайн-школа №1 &middot; ДОД 20.01.26 &middot; Предварительный отчёт &middot; Подготовлено: Гипотеза
+  </div>
+
+</div>
+
+<script>
+const purple = '#7C3AED';
+const purpleLight = 'rgba(124, 58, 237, 0.12)';
+const pink = '#EC4899';
+const pinkLight = 'rgba(236, 72, 153, 0.12)';
+const lime = '#84CC16';
+const limeLight = 'rgba(132, 204, 22, 0.12)';
+const gray = '#9CA3AF';
+const danger = '#DC2626';
+const dangerLight = 'rgba(220, 38, 38, 0.12)';
+
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#6B7280';
+
+// Attendance
+new Chart(document.getElementById('chartAttendance'), {
+  type: 'bar',
+  data: {
+    labels: ['06.11.25', '17.12.25', '20.01.26'],
+    datasets: [{
+      data: [31.23, 72.48, 12.21],
+      backgroundColor: [purpleLight, limeLight, dangerLight],
+      borderColor: [purple, lime, danger],
+      borderWidth: 2,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.raw + '%' } }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#F3F4F6' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ROMI
+new Chart(document.getElementById('chartRomi'), {
+  type: 'bar',
+  data: {
+    labels: ['06.11.25', '17.12.25', '20.01.26'],
+    datasets: [{
+      data: [43.26, 155.60, 0],
+      backgroundColor: [purpleLight, limeLight, dangerLight],
+      borderColor: [purple, lime, danger],
+      borderWidth: 2,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.raw + '%' } }
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: '#F3F4F6' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Sources dual axis
+new Chart(document.getElementById('chartSources'), {
+  type: 'bar',
+  data: {
+    labels: ['ВК', 'Яндекс', 'ТГ'],
+    datasets: [
+      {
+        label: 'CPR ₽',
+        data: [5887, 1484, 4337],
+        backgroundColor: [purpleLight, pinkLight, 'rgba(14,165,233,0.12)'],
+        borderColor: [purple, pink, '#0EA5E9'],
+        borderWidth: 2,
+        borderRadius: 4,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Доходимость %',
+        data: [29.41, 0.75, 18.18],
+        type: 'line',
+        borderColor: danger,
+        backgroundColor: danger,
+        pointRadius: 5,
+        pointBackgroundColor: danger,
+        tension: 0,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      y: { beginAtZero: true, position: 'left', title: { display: true, text: 'CPR ₽', font: { size: 11 } }, grid: { color: '#F3F4F6' } },
+      y1: { beginAtZero: true, max: 50, position: 'right', title: { display: true, text: 'Дох-ть %', font: { size: 11 } }, ticks: { callback: v => v + '%' }, grid: { drawOnChartArea: false } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Cold trend
+new Chart(document.getElementById('chartColdTrend'), {
+  type: 'line',
+  data: {
+    labels: ['06.11.25', '17.12.25', '20.01.26'],
+    datasets: [
+      {
+        label: 'Доходимость %',
+        data: [14.42, 16.82, 7.30],
+        borderColor: pink,
+        backgroundColor: pinkLight,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: pink
+      },
+      {
+        label: 'CPR ₽',
+        data: [3335, 4567, 2501],
+        borderColor: purple,
+        backgroundColor: 'transparent',
+        borderDash: [5, 5],
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: purple,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: 'Дох-ть %', font: { size: 11 } }, ticks: { callback: v => v + '%' }, grid: { color: '#F3F4F6' } },
+      y1: { beginAtZero: true, position: 'right', title: { display: true, text: 'CPR ₽', font: { size: 11 } }, grid: { drawOnChartArea: false } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
