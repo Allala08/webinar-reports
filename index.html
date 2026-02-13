@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчёты по запускам — Онлайн-школа №1</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #6B21A8;
+            --purple-light: #F3E8FF;
+            --pink: #EC4899;
+            --lime: #B5CC18;
+            --bg: #FAFAFA;
+            --card: #FFFFFF;
+            --text: #1A1A2E;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 680px; margin: 0 auto; }
+
+        .header {
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--purple);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--purple);
+        }
+
+        .header .sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .report {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.15s;
+        }
+
+        .report:hover {
+            border-color: var(--purple);
+        }
+
+        .report-left { display: flex; align-items: center; gap: 12px; }
+
+        .report-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: var(--purple-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--purple);
+            flex-shrink: 0;
+        }
+
+        .report a {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        .report a:hover { color: var(--purple); }
+
+        .report .date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .report .tag {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .tag-ready { background: #DCFCE7; color: #16A34A; }
+        .tag-draft { background: #FEF3C7; color: #D97706; }
+
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 40px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Отчёты по запускам</h1>
+        <div class="sub">Онлайн-школа №1 &middot; Подготовлено: Гипотеза</div>
+    </div>
+
+    <div class="report">
+        <div class="report-left">
+            <div class="report-icon">ДОД</div>
+            <div>
+                <a href="otchet_DOD_20-01-26.html">ДОД 20.01.26 — предварительный отчёт</a>
+                <div class="date">Добавлено: 13.02.2026</div>
+            </div>
+        </div>
+        <span class="tag tag-ready">Готов</span>
+    </div>
+
+    <!-- Шаблон для новых отчётов:
+    <div class="report">
+        <div class="report-left">
+            <div class="report-icon">ДОД</div>
+            <div>
+                <a href="otchet_DOD_DD-MM-YY.html">ДОД DD.MM.YY — предварительный отчёт</a>
+                <div class="date">Добавлено: ...</div>
+            </div>
+        </div>
+        <span class="tag tag-ready">Готов</span>
+    </div>
+    -->
+
+    <div class="footer">
+        Онлайн-школа №1 &middot; Аналитика запусков
+    </div>
+
+</div>
+
+</body>
+</html>
